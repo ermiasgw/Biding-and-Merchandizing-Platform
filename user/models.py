@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from phonenumber_field.modelfields import PhoneNumberField
+from django_countries.fields import CountryField
 # Create your models here.
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
@@ -11,9 +12,9 @@ class User(AbstractUser):
 
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
     email = models.EmailField(unique=True)
-    address = models.CharField(max_length=20)
-    phone_number = models.CharField(max_length=20)
-    nationality = models.CharField(max_length=200)
+    address = models.CharField(max_length=128)
+    phone_number = PhoneNumberField(blank=True)
+    country = CountryField()
 
     username=None
     first_name=None
@@ -26,22 +27,23 @@ class User(AbstractUser):
 
 class Individual(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     date_of_birth = models.DateField()
-    identification_no = models.CharField(max_length=200)
-    profile_picture = models.ImageField()
+    identification_no = models.CharField(max_length=30)
+    profile_picture = models.ImageField(upload_to='profile-images/')
 
 class Organization(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=128)
     category = models.ManyToManyField(Category)
-    website = models.CharField(max_length=200)
+    website = models.URLField()
     description = models.TextField()
-    logo = models.ImageField()
+    tin_no = models.CharField(max_length=30)
+    logo = models.ImageField(upload_to='logo-images/')
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=128)
+    description = models.TextField()
 
 
