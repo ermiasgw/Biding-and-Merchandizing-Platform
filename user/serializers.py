@@ -3,19 +3,24 @@ from rest_framework import serializers
 from phonenumber_field.serializerfields import PhoneNumberField
 from django_countries.serializer_fields import CountryField
 from .models import Category
+from allauth.account.adapter import get_adapter
+
+
 
 # common fields for a all roles of users
-class CommonSerializer(RegisterSerializer):
+
+   
+
+
+
+class IndividualRegistrationSerializer(RegisterSerializer):
     username = None
     address = serializers.CharField()
-    phone_number = PhoneNumberField()
     country = CountryField()
-
-
-class IndividualRegistrationSerializer(CommonSerializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    date_of_birth = serializers.DateField()  
+    date_of_birth = serializers.DateField() 
+
 
     def save(self, request):
         adapter = get_adapter()
@@ -46,16 +51,27 @@ class IndividualRegistrationSerializer(CommonSerializer):
         return {
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
+            'address': self.validated_data.get('adress', ''),
+            'phone_number': self.validated_data.get('phone_number', ''),
+            'country': self.validated_data.get('country', ''),
+            'first_name': self.validated_data.get('first_name', ''),
+            'last_name': self.validated_data.get('last_name', ''),
+            'date_of_birth': self.validated_data.get('date_of_birth', ''),
+            'identification_no': self.validated_data.get('identification_no', ''),
         }
         
 
 
 
-class OrganizationRegistrationSerializer(CommonSerializer):
+class OrganizationRegistrationSerializer(RegisterSerializer):
+    username = None
+    address = serializers.CharField()
+    phone_number = PhoneNumberField()
+    country = CountryField()
     name = serializers.CharField()
     category = serializers.MultipleChoiceField(choices=Category.objects.all().values_list('name'))
     website = serializers.URLField()
-    description = serializers.TextField()
+    description = serializers.CharField()
 
     def save(self, request):
         adapter = get_adapter()
@@ -85,7 +101,14 @@ class OrganizationRegistrationSerializer(CommonSerializer):
 
     def get_cleaned_data(self):
         return {
-            'username': self.validated_data.get('username', ''),
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
+            'address': self.validated_data.get('adress', ''),
+            'phone_number': self.validated_data.get('phone_number', ''),
+            'country': self.validated_data.get('country', ''),
+            'name': self.validated_data.get('name', ''),
+            'category': self.validated_data.get('category', ''),
+            'website': self.validated_data.get('website', ''),
+            'description': self.validated_data.get('description', ''),
+            'tin_no': self.validated_data.get('tin_no', ''),
         }

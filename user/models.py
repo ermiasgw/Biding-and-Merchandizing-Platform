@@ -2,7 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
+from .managers import individualManager
 # Create your models here.
+
+class Category(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.TextField()
+
+
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         (1, 'individual'),
@@ -13,14 +20,14 @@ class User(AbstractUser):
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
     email = models.EmailField(unique=True)
     address = models.CharField(max_length=128)
-    phone_number = PhoneNumberField(blank=True)
+    phone_number = PhoneNumberField()
     country = CountryField()
 
     username=None
     first_name=None
     last_name=None
 
-    objects = UserManager()
+    objects = individualManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -42,8 +49,5 @@ class Organization(models.Model):
     tin_no = models.CharField(max_length=30)
     logo = models.ImageField(upload_to='logo-images/')
 
-class Category(models.Model):
-    name = models.CharField(max_length=128)
-    description = models.TextField()
 
 

@@ -1,4 +1,5 @@
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.utils import user_email,user_field
 
 
 # adapter class for basic user registration
