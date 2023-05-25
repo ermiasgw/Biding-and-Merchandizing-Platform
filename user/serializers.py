@@ -2,8 +2,9 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 from phonenumber_field.serializerfields import PhoneNumberField
 from django_countries.serializer_fields import CountryField
-from .models import Category
+from .models import Category, Individual, Organization
 from allauth.account.adapter import get_adapter
+from allauth.account.utils import setup_user_email
 
 
 
@@ -46,6 +47,7 @@ class IndividualRegistrationSerializer(RegisterSerializer):
         last_name = data.get("last_name")
         date_of_birth = data.get("date_of_birth")
         identification_no = data.get("identification_no")
+        individual = Individual.objects.create(user=user, first_name=first_name, last_name=last_name,date_of_birth=date_of_birth,identification_no=identification_no)
 
     def get_cleaned_data(self):
         return {
@@ -98,6 +100,8 @@ class OrganizationRegistrationSerializer(RegisterSerializer):
         website = data.get("website")
         description = data.get("description")
         tin_no = data.get("tin_no")
+        org = Organization.objects.create(user=user, name=name, category=category,website=website, description=description, tin_no=tin_no)
+
 
     def get_cleaned_data(self):
         return {
