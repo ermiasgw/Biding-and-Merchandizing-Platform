@@ -2,26 +2,20 @@ from django.urls import path, re_path
 from . import views
 from django.views.generic import TemplateView
 from dj_rest_auth.registration.views import VerifyEmailView,ResendEmailVerificationView
+from dj_rest_auth.views import LogoutView, PasswordResetView, PasswordResetConfirmView, PasswordChangeView
 
 urlpatterns = [
-    path('user-register', views.userSignUpView.as_view(), name="user_register" ),
-    path('organization-register', views.orgSignUpView.as_view(), name="organization_register"),
-    path('verify-email/', VerifyEmailView.as_view(), name='rest_verify_email'),
+    path('user-register/', views.userSignUpView.as_view(), name="user_register" ),
+    path('organization-register/', views.orgSignUpView.as_view(), name="organization_register"),
+    path('account-confirm-email/', VerifyEmailView.as_view(), name='rest_verify_email'),
     path('resend-email/', ResendEmailVerificationView.as_view(), name="rest_resend_email"),
-
-    # This url is used by django-allauth and empty TemplateView is
-    # defined just to allow reverse() call inside app, for example when email
-    # with verification link is being sent, then it's required to render email
-    # content.
-
-    # account_confirm_email - You should override this view to handle it in
-    # your API client somehow and then, send post to /verify-email/ endpoint
-    # with proper key.
-    # If you don't want to use API on that step, then just use ConfirmEmailView
-    # view from:
-    # django-allauth https://github.com/pennersr/django-allauth/blob/master/allauth/account/views.py
+    path('login/', views.LoginView.as_view(), name="login"),
+    path('logout/', LogoutView.as_view(), name="logout"),
+    path('password/reset/', PasswordResetView.as_view(), name="password_reset"),
+    path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path('password_change/', PasswordChangeView.as_view(), name="password_chage"),
     re_path(
-        r'^account-confirm-email/(?P<key>[-:\w]+)/$', TemplateView.as_view(),
+        r'^account-confirm-email/(?P<key>[-:\w]+)/$', views.email_confirm_redirect,
         name='account_confirm_email',
     ),
     path(

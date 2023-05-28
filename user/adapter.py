@@ -20,8 +20,6 @@ class CustomAdapter(DefaultAccountAdapter):
         
         if "password1" in data:
             user.set_password(data["password1"])
-        else:
-            user.set_unusable_password()
 
         if commit:
             # Ability not to commit makes it easier to derive from
